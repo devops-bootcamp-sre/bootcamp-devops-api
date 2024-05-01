@@ -42,7 +42,7 @@ jobs:
         run: |
           git --version
           git clone https://${{ secrets.ACTIONS_SYSTEM_USER }}@github.com/devops-bootcamp-sre/bootcamp-devops-gitops.git
-          cd bootcamp-devops-gitops/services/bootcamp-devops-api/
+          cd bootcamp-devops-gitops/services/bootcamp-devops-api/development
           kustomize edit set image abalderasp/bootcamp-devops-api-dev=abalderasp/bootcamp-devops-api-dev:${{ github.sha }}
           cat kustomization.yaml
           git config --local user.email "abalderas@occ.com.mx"
