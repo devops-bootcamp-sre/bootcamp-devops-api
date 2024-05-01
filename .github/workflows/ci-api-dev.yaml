@@ -25,7 +25,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          file: project-1/api/Dockerfile
+          file: Dockerfile
           tags: abalderasp/bootcamp-devops-project1-api:${{ github.sha }}
           
       - name: "Git checkout"
