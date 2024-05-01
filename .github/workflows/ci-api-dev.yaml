@@ -26,7 +26,7 @@ jobs:
         with:
           push: true
           file: Dockerfile
-          tags: abalderasp/bootcamp-devops-project1-api:${{ github.sha }}
+          tags: abalderasp/bootcamp-devops-api-dev:${{ github.sha }}
           
       - name: "Git checkout"
         uses: "actions/checkout@v2"
@@ -43,7 +43,7 @@ jobs:
           git --version
           git clone https://${{ secrets.ACTIONS_SYSTEM_USER }}@github.com/devops-bootcamp-sre/bootcamp-devops-gitops.git
           cd bootcamp-devops-gitops/services/bootcamp-devops-api/
-          kustomize edit set image abalderasp/bootcamp-devops-api=abalderasp/bootcamp-devops-api:${{ github.sha }}
+          kustomize edit set image abalderasp/bootcamp-devops-api-dev=abalderasp/bootcamp-devops-api-dev:${{ github.sha }}
           cat kustomization.yaml
           git config --local user.email "abalderas@occ.com.mx"
           git config --local user.name "abalderasp"
