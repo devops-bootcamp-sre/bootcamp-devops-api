@@ -2,8 +2,6 @@ name: CI - bootcamp-devops-project1 - api - dev
 on:
   push:
     branches: [ "development" ]
-    paths:
-      - 'project-1/api/**'
   workflow_dispatch:
   
 jobs:
@@ -42,27 +40,12 @@ jobs:
 
       - name: Update Kubernetes resources - api
         run: |
-          cd gitops-bootcamp/api/
-          kustomize edit set image abalderasp/bootcamp-devops-project1-api=abalderasp/bootcamp-devops-project1-api:${{ github.sha }}
+          git --version
+          git clone https://${{ secrets.ACTIONS_SYSTEM_USER }}@github.com/devops-bootcamp-sre/bootcamp-devops-gitops.git
+          cd bootcamp-devops-gitops/services/bootcamp-devops-api/
+          kustomize edit set image abalderasp/bootcamp-devops-api=abalderasp/bootcamp-devops-api:${{ github.sha }}
           cat kustomization.yaml
-
-      - name: Commit files
-        run: |
           git config --local user.email "abalderas@occ.com.mx"
           git config --local user.name "abalderasp"
           git commit -am "rolling image to tag $GITHUB_SHA"
-
-      - name: Push changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.ACTIONS_SYSTEM_USER }}
-          branch: ${{ github.ref }}
-      
-      - name: Slack Notification Demo
-        uses: bryannice/gitactions-slack-notification@2.0.0
-        env: 
-          SLACK_CHANNEL: testchatgpt
-          SLACK_COLOR: ${{ job.status }} # or a specific color like 'good' or '#ff00ff'
-          SLACK_MESSAGE: 'Demo''ing the Slack Notification'
-          SLACK_TITLE: 'Slack Notification Demo'
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          git push origin main
