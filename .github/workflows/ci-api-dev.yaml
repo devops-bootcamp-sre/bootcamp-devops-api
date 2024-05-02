@@ -11,6 +11,9 @@ jobs:
       SHOT_SHA: $(echo ${GITHUB_SHA} | cut -c1-8) # Create SHOT_SHA to image tagging 
       
     steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
       - name: Get Tag
         id: vars
         run: echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
@@ -19,8 +22,6 @@ jobs:
         run: |
           echo "Sha: ${{ env.SHORT_SHA }}"
 
-      - name: Checkout source code
-        uses: actions/checkout@v4
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v3
