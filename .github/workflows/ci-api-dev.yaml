@@ -7,7 +7,13 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      SHOT_SHA: ${GITHUB_SHA::8} # Create SHOT_SHA to image tagging 
+      
     steps:
+      - name: Test SHORT_SHA
+        run: echo $SHORT_SHA
+        
       - name: Checkout source code
         uses: actions/checkout@v4
       -
@@ -33,13 +39,13 @@ jobs:
         with:
           push: true
           file: Dockerfile
-          tags: gitopsdevopsbootcamp/bootcamp-devops-api-dev:${{ steps.vars.outputs.sha_short }}
+          tags: gitopsdevopsbootcamp/bootcamp-devops-api-dev:$SHOT_SHA
       
       - name: Checkout GitOps Repo
         uses: actions/checkout@v4
         with:
           repository: devops-bootcamp-sre/bootcamp-devops-gitops
-          token: ${{ secrets.ACCESS_TOKEN }}
+          token: ${{ secrets.ACCESS_TOKEN}}
 
       - name: Kustomize 
         uses: imranismail/setup-kustomize@v2
@@ -49,7 +55,7 @@ jobs:
           cd services/bootcamp-devops-api/development
           kustomize edit set image gitopsdevopsbootcamp/bootcamp-devops-api-dev:${{ steps.vars.outputs.sha_short }}
           git add .
-          git commit -m "Update image to tag ${{ steps.vars.outputs.sha_short }}"
+          git commit -m "Update image to tag ${{ github.sha }}"
           git push origin main
       
       - name: Status Notify    
