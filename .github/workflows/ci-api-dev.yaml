@@ -8,6 +8,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -19,20 +21,25 @@ jobs:
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}      
+          password: ${{ secrets.DOCKER_TOKEN }}
+      - 
+        name: Get Tag
+        id: vars
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+ 
       -
         name: Build and push - Api
         uses: docker/build-push-action@v5
         with:
           push: true
           file: Dockerfile
-          tags: abalderasp/bootcamp-devops-api-dev:${{ github.sha }}
+          tags: gitopsdevopsbootcamp/bootcamp-devops-api-dev:${{ steps.vars.outputs.sha_short }}
           
-      - name: "Git checkout"
-        uses: "actions/checkout@v2"
+      - name: Checkout GitOps Repo
+        uses: actions/checkout@v4
         with:
-          token: ${{ secrets.ACTIONS_SYSTEM_USER }}
-    
+          token: ${{ secrets.ACCESS_TOKEN }}
+
       - name: Setup Kustomize
         uses: imranismail/setup-kustomize@v1
         with:
@@ -41,11 +48,19 @@ jobs:
       - name: Update Kubernetes resources - api
         run: |
           git --version
-          git clone https://${{ secrets.ACTIONS_SYSTEM_USER }}@github.com/devops-bootcamp-sre/bootcamp-devops-gitops.git
+          git clone https://${{ secrets.ACCESS_TOKEN }}@github.com/devops-bootcamp-sre/bootcamp-devops-gitops.git
           cd bootcamp-devops-gitops/services/bootcamp-devops-api/development
-          kustomize edit set image abalderasp/bootcamp-devops-api-dev=abalderasp/bootcamp-devops-api-dev:${{ github.sha }}
+          kustomize edit set image gitopsdevopsbootcamp/bootcamp-devops-api-dev=gitopsdevopsbootcamp/bootcamp-devops-api-dev:${{ steps.vars.outputs.sha_short }}
           cat kustomization.yaml
-          git config --local user.email "abalderas@occ.com.mx"
-          git config --local user.name "abalderasp"
-          git commit -am "rolling image to tag $GITHUB_SHA"
+          git config --local user.email "tt7886081@gmail.com"
+          git config --local user.name "gitops-devops-bootcamp"
+          git commit -am "Update image to tag ${{ steps.vars.outputs.sha_short }}"
           git push origin main
+
+      - name: Status Notify    
+        uses: sarisia/actions-status-discord@v1
+        if: always()
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          status: ${{ job.status }}
+          title: "CI"
