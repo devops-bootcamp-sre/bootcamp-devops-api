@@ -3,8 +3,6 @@ on:
   push:
     branches: [ "development" ]
   workflow_dispatch:
-env:
-  SHORT_SHA: $(git rev-parse --short HEAD)
 jobs:
   build-and-push-image:
   
@@ -14,7 +12,7 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v4
 
-      - name: Get Tag
+      - name: Get SHORT_SHA
         run: echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV # Create SHOT_SHA env to image tagging 
 
       - name: Set up QEMU
@@ -47,6 +45,9 @@ jobs:
         with:
           repository: devops-bootcamp-sre/bootcamp-devops-gitops
           token: ${{ secrets.ACCESS_TOKEN}}
+
+      - name: Get SHORT_SHA
+        run: echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
       - name: Kustomize 
         uses: imranismail/setup-kustomize@v2
