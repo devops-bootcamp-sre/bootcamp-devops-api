@@ -3,7 +3,8 @@ on:
   push:
     branches: [ "development" ]
   workflow_dispatch:
-  
+env:
+  SHORT_SHA: $(git rev-parse --short HEAD)
 jobs:
   build-and-push-image:
   
