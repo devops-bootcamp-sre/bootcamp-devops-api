@@ -8,12 +8,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      SHOT_SHA: ${GITHUB_SHA::8} # Create SHOT_SHA to image tagging 
+      SHOT_SHA: ${{ github.sha }}::8 # Create SHOT_SHA to image tagging 
       
     steps:
       - name: Test SHORT_SHA
         run: echo $SHORT_SHA
-        
+
       - name: Checkout source code
         uses: actions/checkout@v4
       -
