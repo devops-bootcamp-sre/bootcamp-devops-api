@@ -40,14 +40,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Get SHORT_SHA
+        run: echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
       - name: Checkout GitOps Repo
         uses: actions/checkout@v4
         with:
           repository: devops-bootcamp-sre/bootcamp-devops-gitops
           token: ${{ secrets.ACCESS_TOKEN}}
-
-      - name: Get SHORT_SHA
-        run: echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
       - name: Kustomize 
         uses: imranismail/setup-kustomize@v2
