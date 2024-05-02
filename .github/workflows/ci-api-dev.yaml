@@ -34,29 +34,24 @@ jobs:
           push: true
           file: Dockerfile
           tags: gitopsdevopsbootcamp/bootcamp-devops-api-dev:${{ steps.vars.outputs.sha_short }}
-          
+      
       - name: Checkout GitOps Repo
         uses: actions/checkout@v4
         with:
+          repository: devops-bootcamp-sre/bootcamp-devops-gitops
           token: ${{ secrets.ACCESS_TOKEN }}
 
-      - name: Setup Kustomize
-        uses: imranismail/setup-kustomize@v1
-        with:
-          kustomize-version: "3.6.1"
-
-      - name: Update Kubernetes resources - api
-        run: |
-          git --version
-          git clone https://${{ secrets.ACCESS_TOKEN }}@github.com/devops-bootcamp-sre/bootcamp-devops-gitops.git
+      - name: Kustomize 
+        uses: imranismail/setup-kustomize@v2
+      - run: |
+          git config --global user.email "tt7886081@gmail.com"
+          git config --global user.name "gitops-devops-bootcamp"
           cd bootcamp-devops-gitops/services/bootcamp-devops-api/development
-          kustomize edit set image gitopsdevopsbootcamp/bootcamp-devops-api-dev=gitopsdevopsbootcamp/bootcamp-devops-api-dev:${{ steps.vars.outputs.sha_short }}
-          cat kustomization.yaml
-          git config --local user.email "tt7886081@gmail.com"
-          git config --local user.name "gitops-devops-bootcamp"
-          git commit -am "Update image to tag ${{ steps.vars.outputs.sha_short }}"
+          kustomize edit set image gitopsdevopsbootcamp/bootcamp-devops-api-dev:${{ steps.vars.outputs.sha_short }}
+          git add .
+          git commit -m "Update image to tag ${{ steps.vars.outputs.sha_short }}"
           git push origin main
-
+      
       - name: Status Notify    
         uses: sarisia/actions-status-discord@v1
         if: always()
