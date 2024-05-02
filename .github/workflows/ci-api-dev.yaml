@@ -8,7 +8,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      SHOT_SHA: ${{ github.sha[0:8] }} # Create SHOT_SHA to image tagging 
+      SHOT_SHA: $(echo ${GITHUB_SHA} | cut -c1-8) # Create SHOT_SHA to image tagging 
       
     steps:
       - name: Test SHORT_SHA
