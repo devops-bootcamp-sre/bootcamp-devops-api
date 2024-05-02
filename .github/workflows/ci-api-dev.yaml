@@ -11,8 +11,13 @@ jobs:
       SHOT_SHA: $(echo ${GITHUB_SHA} | cut -c1-8) # Create SHOT_SHA to image tagging 
       
     steps:
+      - name: Get Tag
+        id: vars
+        run: echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+      
       - name: Test SHORT_SHA
-        run: echo $SHORT_SHA
+        run: |
+          echo "Sha: ${{ env.SHORT_SHA }}"
 
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -28,10 +33,10 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - 
-        name: Get Tag
-        id: vars
-        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      # - 
+      #   name: Get Tag
+      #   id: vars
+      #   run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
  
       -
         name: Build and push - Api
